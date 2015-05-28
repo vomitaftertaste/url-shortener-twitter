@@ -2,3 +2,5 @@
 
 *.wpu
 *.wpr
+*.pyc
+*.db
