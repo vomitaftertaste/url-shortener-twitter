@@ -1,21 +1,9 @@
 from flask import Flask
 from flask import redirect, render_template
-from models import UrlData
+from expander import sqlitedb_expander
 
 app = Flask(__name__)
 
-def test_expander(short_url):
-    if 'g' in short_url:
-        return "http://www.google.com"
-    else:
-        return None
-
-def sqlitedb_expander(short_url):
-    try:
-        return UrlData.get(UrlData.short == short_url).full
-    except:
-        return None
-    
 app_expander = sqlitedb_expander
 
 @app.route('/<short_url>')
