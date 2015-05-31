@@ -23,7 +23,8 @@ def process_mentions(mentions):
                 urls.append({
                     'full':url['expanded_url'],
                     'short':shorten(url['expanded_url']),
-                    'display':url['display_url']
+                    'display':url['display_url'],
+                    't.co':url['url']
                 })
             twitter.post_shortened_urls(mention, urls)
         print str(mention['id']) + ' processed...'
