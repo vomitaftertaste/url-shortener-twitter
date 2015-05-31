@@ -9,5 +9,12 @@ class UrlData(Model):
     
     class Meta:
         database = db
-        
-db.create_table(UrlData, safe=True)
+
+class KeyValueItem(Model):
+    key = CharField()
+    value = CharField()
+    
+    class Meta:
+        database = db
+
+db.create_tables([UrlData,KeyValueItem], safe=True)
