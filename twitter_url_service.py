@@ -2,6 +2,7 @@ from twython import *
 from config import *
 from models import *
 import pickle
+from time import sleep
 
 class TwitterUrlService():
     def __init__(self, twython_object=None):
@@ -24,7 +25,7 @@ class TwitterUrlService():
         return pickle.load(open('mentions.p','rb'))
         
     def get_mentions_timeline(self):
-        return self.get_mentions_timeline_offline()
+        return self.get_mentions_timeline_online()
     
     def get_url_presentation_format(self, first_url, second_url):
         return first_url + ' -> ' + second_url + '\n'
@@ -37,9 +38,9 @@ class TwitterUrlService():
         for url in urls:
             if current_len + len(self.get_url_presentation_format(url['t.co'],url['short'])) > self.tweet_limit:
                 reply_texts.append(reply_text)
-                reply_text = ""
+                reply_text = ''
                 current_len = 0
-            reply_text += self.get_url_presentation_format(url['display'],url['short'])
+            reply_text += self.get_url_presentation_format(url['full'],url['short'])
             current_len += len(self.get_url_presentation_format(url['t.co'],url['short']))
         reply_texts.append(reply_text)
         return reply_texts
@@ -50,8 +51,14 @@ class TwitterUrlService():
             print reply.encode('utf-8')
         
     def post_shortened_urls_online(self, request_tweet, reply_texts):
-        self.twython_object.update_status(status=construct_reply_text(request_tweet, urls), in_reply_status_id=request_tweet['id'])
+        delay = 5 #seconds
+        for idx,reply in enumerate(reply_texts):
+            reply_tweet_id = request_tweet['id'] if idx == 0 else previous_reply['id']
+            print "posting reply..."
+            print reply
+            previous_reply = self.twython_object.update_status(status=reply, in_reply_to_status_id=reply_tweet_id)
+            sleep(delay)
     
     def post_shortened_urls(self, request_tweet, urls):
-        self.post_shortened_urls_offline(request_tweet, self.construct_reply_texts(request_tweet, urls))
+        self.post_shortened_urls_online(request_tweet, self.construct_reply_texts(request_tweet, urls))
         
