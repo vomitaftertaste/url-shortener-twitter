@@ -8,25 +8,26 @@ delay = 60 #seconds
 twitter = TwitterUrlService()
 
 def update_last_processed(value):
-    last_processed = KeyValueItem.get_or_create(key='last_processed')
+    last_processed = KeyValueItem.get_or_create(key='last_processed')[0]
     last_processed.value = value
     last_processed.save()
 
 def shorten(full_url):
-    return get_config('DOMAIN') + '//' + 'xyzabc'
+    return get_config('DOMAIN_REDIRECT') + '/' + 'xyzabc'
   
 def process_mentions(mentions):
     for mention in reversed(mentions):
-        if len(mention['entities']['url']) > 0:
+        if len(mention['entities']['urls']) > 0:
             urls = []
-            for url in mention['entities']['url']:
+            for url in mention['entities']['urls']:
                 urls.append({
-                    'full':mention['entities']['url']['expanded_url'],
-                    'short':shorten(mention['entities']['url']['expanded_url']),
-                    'display':mention['entities']['url']['display_url']
+                    'full':url['expanded_url'],
+                    'short':shorten(url['expanded_url']),
+                    'display':url['display_url']
                 })
             twitter.post_shortened_urls(mention, urls)
-        update_last_processed(mention['id'])
+        print str(mention['id']) + ' processed...'
+        update_last_processed(str(mention['id']))
         
 if __name__ == '__main__':
     while True:
