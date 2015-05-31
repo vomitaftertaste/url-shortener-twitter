@@ -12,6 +12,8 @@ Deployment steps (virtualenv is used in development):
 
 3. pip install -r requirements.txt
 
-4. run twitter service by 'python twitter_app.py'
+4. add configuration in config.py
 
-5. run redirection service by 'python app.py' 
+5. run twitter service by 'python twitter_app.py'
+
+6. run redirection service by 'python app.py' 
